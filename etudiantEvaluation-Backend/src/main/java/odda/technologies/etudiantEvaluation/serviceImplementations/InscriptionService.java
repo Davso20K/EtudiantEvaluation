@@ -38,6 +38,7 @@ public class InscriptionService implements IInscriptionService {
         AnneeScolaire anneeScolaire = anneeScolaireService.obtenirAnneeScolaireActuelle();
 
         Inscription inscription = new Inscription();
+
         inscription.setEtudiant(etudiant);
         inscription.setFiliere(filiere);
         inscription.setAnneeScolaire(anneeScolaire);
@@ -47,6 +48,24 @@ public class InscriptionService implements IInscriptionService {
 
         return convertInscriptionToInscriptionDTO(inscription);
     }
+    @Override
+    public InscriptionDTO validerInscription(long idInscription) {
+        Inscription inscription = inscriptionRepository.findById(idInscription)
+                .orElseThrow(() -> new IllegalArgumentException("Inscription non trouvée"));
+        inscription.setStatut(StatutInscriptionEnum.VALIDE);
+        Inscription inscriptionSaved = inscriptionRepository.save(inscription);
+        return convertInscriptionToInscriptionDTO(inscriptionSaved);
+    }
+
+    @Override
+    public InscriptionDTO invaliderInscription(long idInscription) {
+        Inscription inscription = inscriptionRepository.findById(idInscription)
+                .orElseThrow(() -> new IllegalArgumentException("Inscription non trouvée"));
+        inscription.setStatut(StatutInscriptionEnum.NON_VALIDE);
+        Inscription inscriptionSaved = inscriptionRepository.save(inscription);
+        return convertInscriptionToInscriptionDTO(inscriptionSaved);
+    }
+
     @Override
     public List<InscriptionDTO> listInscriptions(){
         List<Inscription> inscriptions=inscriptionRepository.findAll();
@@ -87,6 +106,9 @@ public class InscriptionService implements IInscriptionService {
                 .idInscription(inscription.getIdInscription())
                 .date(inscription.getDate())
                 .statut(inscription.getStatut())
+                .etudiantId(inscription.getEtudiant().getIdEtudiant())
+                .filiereId(inscription.getFiliere().getIdFiliere())
+                .anneeScolaireId(inscription.getAnneeScolaire().getIdAnneScolaire())
                 .etudiantDTO(EtudiantService.convertEtudiantToEtudiantDTO(inscription.getEtudiant()))
                 .filiereDTO(FiliereService.convertFiliereToFiliereDTO(inscription.getFiliere()))
                 .anneeScolaireDTO(AnneeScolaireService.convertAnneeScolaireToAnneeScolaireDTO(inscription.getAnneeScolaire()))
