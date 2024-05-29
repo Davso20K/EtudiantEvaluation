@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import odda.technologies.etudiantEvaluation.Enumerations.StatutInscriptionEnum;
 
 import java.util.Date;
 
@@ -14,7 +15,7 @@ import java.util.Date;
 public class InscriptionDTO {
     private long idInscription;
     private Date date;
-    private String statut;
+    private StatutInscriptionEnum statut;
     private long etudiantId;
     private long anneeScolaireId;
     private long filiereId;

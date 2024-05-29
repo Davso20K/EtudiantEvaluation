@@ -15,7 +15,10 @@
 	<description>API pour gérer les opérations d&apos;inscription et d&apos;évaluation des étudiants.</description>
 	<properties>
 		<java.version>17</java.version>
+
 	</properties>
+
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

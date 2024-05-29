@@ -17,7 +17,9 @@ public class Filiere {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idFiliere;
+    @Column(unique = true)
     private String code;
+    @Column(unique = true)
     private String libelle;
 
     @OneToMany(mappedBy = "filiere", cascade = CascadeType.ALL)

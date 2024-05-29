@@ -5,6 +5,8 @@ import odda.technologies.etudiantEvaluation.services.IInscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/inscriptions")
 public class InscriptionController {
@@ -15,6 +17,24 @@ public class InscriptionController {
     public InscriptionDTO inscrireEtudiant(@RequestBody InscriptionDTO inscriptionDTO) {
         return inscriptionService.inscrireEtudiant(inscriptionDTO.getEtudiantDTO().getIdEtudiant(),
                 inscriptionDTO.getFiliereDTO().getIdFiliere(), inscriptionDTO.getStatut());
+    }
+
+    @GetMapping("")
+    public List<InscriptionDTO> listerInscriptions() {
+        return inscriptionService.listInscriptions();
+    }
+
+    @GetMapping("/{idEtudiant}")
+    public List<InscriptionDTO> listerInscriptionsParEtudiant(@PathVariable Long id){
+        return inscriptionService.listInscriptionsByEtudiant(id);
+    }
+    @GetMapping("/valide/{idEtudiant}/")
+    public List<InscriptionDTO> listerInscriptionsValideParEtudiant(@PathVariable Long id){
+        return inscriptionService.ListerInscriptionsValideByEtudiant(id);
+    }
+    @GetMapping("/non_valide/{idEtudiant}/")
+    public List<InscriptionDTO> listerInscriptionsNonValideParEtudiant(@PathVariable Long id){
+        return inscriptionService.ListerInscriptionsNonValideByEtudiant(id);
     }
 
    /* @GetMapping("/{id}")

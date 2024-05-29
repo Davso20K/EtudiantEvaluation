@@ -19,10 +19,14 @@ public class Etudiant {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private long idEtudiant;
     private String nom;
+    @Column(unique = true)
     private String prenom;
+    @Enumerated(EnumType.STRING)
     private SexeEnum sexe;
     private Date dateNaissance;
+    @Column(unique = true)
     private String contact;
+    @Column(unique = true)
     private String email;
 
     @OneToMany(mappedBy = "etudiant", cascade=CascadeType.ALL)
