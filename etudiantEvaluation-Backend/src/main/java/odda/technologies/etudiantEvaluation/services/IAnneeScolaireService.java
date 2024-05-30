@@ -10,6 +10,8 @@ public interface IAnneeScolaireService {
 
     public AnneeScolaire obtenirAnneeScolaireActuelle();
     public AnneeScolaireAvecListeInscriptionsDTO obtenirAnneeScolaire(Long id);
+    public AnneeScolaire obtenirAnneeScolaireSanslisteInscriptions(Long idFiliere);
+
     public List<AnneeScolaireAvecListeInscriptionsDTO> listerAnneesScolaires();
 
     public void supprimerAnneeScolaire(Long id);

@@ -21,12 +21,9 @@ public class FiliereController {
         return filiereService.creerFiliere(filiereDTO);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<?> obtenirFiliere(@PathVariable Long id) {
-        FiliereAvecListeInscriptionsDTO filiere = filiereService.obtenirFiliere(id);
-        if (filiere == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Filière non trouvée avec l'ID : " + id);
-        }
-        return ResponseEntity.ok(filiere);
+    public FiliereAvecListeInscriptionsDTO obtenirFiliere(@PathVariable Long id) {
+        return filiereService.obtenirFiliere(id);
+
     }
     @GetMapping("")
     public List<FiliereAvecListeInscriptionsDTO> listerFilieres() {

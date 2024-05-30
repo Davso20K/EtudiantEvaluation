@@ -1,5 +1,6 @@
 package odda.technologies.etudiantEvaluation.serviceImplementations;
 
+import jakarta.persistence.EntityNotFoundException;
 import odda.technologies.etudiantEvaluation.dto.EtudiantAvecListeInscriptionsDTO;
 import odda.technologies.etudiantEvaluation.dto.EtudiantDTO;
 import odda.technologies.etudiantEvaluation.dto.InscriptionDTO;
@@ -28,8 +29,12 @@ public class EtudiantService implements IEtudiantService {
 
     @Override
     public EtudiantAvecListeInscriptionsDTO obtenirEtudiant(Long id) {
-        Etudiant etudiant = etudiantRepository.findById(id).orElse(null);
-        return etudiant != null ? EtudiantMapper.convertEtudiantToEtudiantAvecListeInscDTO(etudiant) : null;
+        Etudiant etudiant = etudiantRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("L'étudiant n'a pas été trouvé."));
+        return EtudiantMapper.convertEtudiantToEtudiantAvecListeInscDTO(etudiant) ;
+    }
+    @Override
+    public Etudiant obtenirEtudiantSanslisteInscriptions(Long id) {
+            return etudiantRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("L'étudiant n'a pas été trouvé."));
     }
 
     @Override
@@ -47,15 +52,16 @@ public class EtudiantService implements IEtudiantService {
 
     @Override
     public EtudiantDTO mettreAJourEtudiant(Long id, EtudiantDTO etudiantDTO) {
-        Etudiant etudiantExistant = etudiantRepository.findById(id).orElse(null);
-        if (etudiantExistant != null) {
-            Etudiant etudiant =EtudiantMapper.convertEtudiantDTOToEtudiant(etudiantDTO);
-            etudiant.setIdEtudiant(id);
-            etudiant = etudiantRepository.save(etudiant);
-            return EtudiantMapper.convertEtudiantToEtudiantDTO(etudiant);
-        }
-        return null;
+        Etudiant etudiantExistant = etudiantRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("L'étudiant n'a pas été trouvé."));
+
+        Etudiant etudiant = EtudiantMapper.convertEtudiantDTOToEtudiant(etudiantDTO);
+        etudiant.setIdEtudiant(id);
+        etudiant = etudiantRepository.save(etudiant);
+
+        return EtudiantMapper.convertEtudiantToEtudiantDTO(etudiant);
     }
+
 
     @Override
     public void supprimerEtudiant(Long id) {

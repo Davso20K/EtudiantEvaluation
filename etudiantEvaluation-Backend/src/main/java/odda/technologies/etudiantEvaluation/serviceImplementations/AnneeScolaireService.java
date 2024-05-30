@@ -1,5 +1,6 @@
 package odda.technologies.etudiantEvaluation.serviceImplementations;
 
+import jakarta.persistence.EntityNotFoundException;
 import odda.technologies.etudiantEvaluation.dto.AnneeScolaireAvecListeInscriptionsDTO;
 import odda.technologies.etudiantEvaluation.dto.AnneeScolaireDTO;
 import odda.technologies.etudiantEvaluation.dto.InscriptionDTO;
@@ -49,9 +50,19 @@ public class AnneeScolaireService implements IAnneeScolaireService {
 
     @Override
     public AnneeScolaireAvecListeInscriptionsDTO obtenirAnneeScolaire(Long id) {
-        AnneeScolaire anneeScolaire = anneeScolaireRepository.findById(id).orElse(null);
-        return anneeScolaire != null ? AnneeScolaireMapper.convertAnScolaireToAnneeScolaireAvecListInscDTO(anneeScolaire) : null;
+        AnneeScolaire anneeScolaire = anneeScolaireRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("L'année scolaire n'a pas été trouvée."));
+
+        return AnneeScolaireMapper.convertAnScolaireToAnneeScolaireAvecListInscDTO(anneeScolaire);
     }
+    @Override
+    public AnneeScolaire obtenirAnneeScolaireSanslisteInscriptions(Long id){
+
+        return anneeScolaireRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("L'année scolaire n'a pas été trouvée."));
+    }
+
+
 
     @Override
     public List<AnneeScolaireAvecListeInscriptionsDTO> listerAnneesScolaires() {

@@ -9,6 +9,7 @@ import java.util.List;
 public interface IEtudiantService {
     public EtudiantDTO creerEtudiant(EtudiantDTO etudiantDTO);
     public EtudiantAvecListeInscriptionsDTO obtenirEtudiant(Long id);
+    public Etudiant obtenirEtudiantSanslisteInscriptions(Long id);
     public List<EtudiantAvecListeInscriptionsDTO> listerEtudiants();
     public EtudiantDTO mettreAJourEtudiant(Long id, EtudiantDTO etudiantDTO);
     public void supprimerEtudiant(Long id);

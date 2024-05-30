@@ -1,5 +1,6 @@
 package odda.technologies.etudiantEvaluation.serviceImplementations;
 
+import jakarta.persistence.EntityNotFoundException;
 import odda.technologies.etudiantEvaluation.dto.FiliereAvecListeInscriptionsDTO;
 import odda.technologies.etudiantEvaluation.dto.FiliereDTO;
 import odda.technologies.etudiantEvaluation.dto.InscriptionDTO;
@@ -27,8 +28,15 @@ public class FiliereService implements IFiliereService {
 
     @Override
     public FiliereAvecListeInscriptionsDTO obtenirFiliere(Long id) {
-        Filiere filiere = filiereRepository.findById(id).orElse(null);
-        return filiere != null ? FiliereMapper.convertFiliereToFiliereAvecListeInscDTO(filiere) : null;
+        Filiere filiere = filiereRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("La filière  n'a pas été trouvée."));
+
+        return FiliereMapper.convertFiliereToFiliereAvecListeInscDTO(filiere);
+    }
+    public Filiere obtenirFiliereSanslisteInscriptions(Long id){
+
+        return filiereRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("La filière  n'a pas été trouvée."));
     }
 
     @Override
@@ -41,14 +49,14 @@ public class FiliereService implements IFiliereService {
 
     @Override
     public FiliereDTO mettreAJourFiliere(Long id, FiliereDTO filiereDTO) {
-        Filiere filiereExistant = filiereRepository.findById(id).orElse(null);
-        if (filiereExistant != null) {
-            Filiere filiere = FiliereMapper.convertFiliereDTOToFiliere(filiereDTO);
-            filiere.setIdFiliere(id);
-            filiere = filiereRepository.save(filiere);
-            return FiliereMapper.convertFiliereToFiliereDTO(filiere);
-        }
-        return null;
+        Filiere filiereExistante = filiereRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("La filière n'a pas été trouvée."));
+
+        Filiere filiere = FiliereMapper.convertFiliereDTOToFiliere(filiereDTO);
+        filiere.setIdFiliere(id);
+        filiere = filiereRepository.save(filiere);
+
+        return FiliereMapper.convertFiliereToFiliereDTO(filiere);
     }
 
     @Override

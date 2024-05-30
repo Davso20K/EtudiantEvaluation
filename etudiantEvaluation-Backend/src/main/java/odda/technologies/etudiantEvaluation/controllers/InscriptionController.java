@@ -24,30 +24,21 @@ public class InscriptionController {
     }
 
     @GetMapping("/etudiant/{idEtudiant}")
-    public ResponseEntity<?> listerInscriptionsParEtudiant(@PathVariable Long idEtudiant) {
-        List<InscriptionDTO> inscriptions = inscriptionService.listInscriptionsByEtudiant(idEtudiant);
-        if (inscriptions.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aucune inscription trouvée pour l'étudiant avec l'ID : " + idEtudiant);
-        }
-        return ResponseEntity.ok(inscriptions);
+    public  List<InscriptionDTO> listerInscriptionsParEtudiant(@PathVariable Long idEtudiant) {
+        return inscriptionService.listInscriptionsByEtudiant(idEtudiant);
+
     }
 
     @GetMapping("/valides/etudiant/{idEtudiant}")
-    public ResponseEntity<?> listerInscriptionsValideParEtudiant(@PathVariable Long idEtudiant) {
-        List<InscriptionDTO> inscriptions = inscriptionService.ListerInscriptionsValideByEtudiant(idEtudiant);
-        if (inscriptions.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aucune inscription valide trouvée pour l'étudiant avec l'ID : " + idEtudiant);
-        }
-        return ResponseEntity.ok(inscriptions);
+    public List<InscriptionDTO>  listerInscriptionsValideParEtudiant(@PathVariable Long idEtudiant) {
+        return inscriptionService.ListerInscriptionsValideByEtudiant(idEtudiant);
+
     }
 
     @GetMapping("/non_valides/etudiant/{idEtudiant}")
-    public ResponseEntity<?> listerInscriptionsNonValideParEtudiant(@PathVariable Long idEtudiant) {
-        List<InscriptionDTO> inscriptions = inscriptionService.ListerInscriptionsNonValideByEtudiant(idEtudiant);
-        if (inscriptions.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aucune inscription non valide trouvée pour l'étudiant avec l'ID : " + idEtudiant);
-        }
-        return ResponseEntity.ok(inscriptions);
+    public List<InscriptionDTO>  listerInscriptionsNonValideParEtudiant(@PathVariable Long idEtudiant) {
+         return inscriptionService.ListerInscriptionsNonValideByEtudiant(idEtudiant);
+
     }
 
     @PostMapping("")

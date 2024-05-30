@@ -21,12 +21,9 @@ public class AnneeScolaireController {
         return anneeScolaireService.listerAnneesScolaires();
     }
     @GetMapping("/{id}")
-    public ResponseEntity<?> obtenirAnneeScolaire(@PathVariable Long id) {
-        AnneeScolaireAvecListeInscriptionsDTO anneeScolaire = anneeScolaireService.obtenirAnneeScolaire(id);
-        if (anneeScolaire == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Année scolaire non trouvée avec l'ID : " + id);
-        }
-        return ResponseEntity.ok(anneeScolaire);
+    public AnneeScolaireAvecListeInscriptionsDTO obtenirAnneeScolaire(@PathVariable Long id) {
+        return anneeScolaireService.obtenirAnneeScolaire(id);
+
     }
     @DeleteMapping("/{id}")
     public void supprimerAnneeScolaire(@PathVariable Long id) {

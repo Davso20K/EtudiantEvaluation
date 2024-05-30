@@ -22,12 +22,9 @@ public class EtudiantController {
         return etudiantService.creerEtudiant(etudiantDTO);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<?> obtenirEtudiant(@PathVariable Long id) {
-        EtudiantAvecListeInscriptionsDTO etudiant = etudiantService.obtenirEtudiant(id);
-        if (etudiant == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Étudiant non trouvé avec l'ID : " + id);
-        }
-        return ResponseEntity.ok(etudiant);
+    public EtudiantAvecListeInscriptionsDTO obtenirEtudiant(@PathVariable Long id) {
+         return etudiantService.obtenirEtudiant(id);
+
     }
 
     @GetMapping("")
