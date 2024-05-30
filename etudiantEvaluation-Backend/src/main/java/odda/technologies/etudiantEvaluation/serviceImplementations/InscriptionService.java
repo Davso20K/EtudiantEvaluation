@@ -1,11 +1,16 @@
 package odda.technologies.etudiantEvaluation.serviceImplementations;
 
 import odda.technologies.etudiantEvaluation.Enumerations.StatutInscriptionEnum;
+import odda.technologies.etudiantEvaluation.dto.InscriptionAvecParentsInfosDTO;
 import odda.technologies.etudiantEvaluation.dto.InscriptionDTO;
 import odda.technologies.etudiantEvaluation.entities.AnneeScolaire;
 import odda.technologies.etudiantEvaluation.entities.Etudiant;
 import odda.technologies.etudiantEvaluation.entities.Filiere;
 import odda.technologies.etudiantEvaluation.entities.Inscription;
+import odda.technologies.etudiantEvaluation.mappers.AnneeScolaireMapper;
+import odda.technologies.etudiantEvaluation.mappers.EtudiantMapper;
+import odda.technologies.etudiantEvaluation.mappers.FiliereMapper;
+import odda.technologies.etudiantEvaluation.mappers.InscriptionMapper;
 import odda.technologies.etudiantEvaluation.repositories.EtudiantRepository;
 import odda.technologies.etudiantEvaluation.repositories.FiliereRepository;
 import odda.technologies.etudiantEvaluation.repositories.InscriptionRepository;
@@ -32,11 +37,11 @@ public class InscriptionService implements IInscriptionService {
 
 
     @Override
-    public InscriptionDTO inscrireEtudiant(long etudiantId, long filiereId, StatutInscriptionEnum statut) {
-        Etudiant etudiant = etudiantRepository.findById(etudiantId).orElseThrow();
-        Filiere filiere = filiereRepository.findById(filiereId).orElseThrow();
+    public InscriptionDTO inscrireEtudiant(InscriptionAvecParentsInfosDTO inscriptionDTO) {
+        Etudiant etudiant = etudiantRepository.findById(inscriptionDTO.getEtudiantDTO().getIdEtudiant()).orElseThrow();
+        Filiere filiere = filiereRepository.findById(inscriptionDTO.getFiliereDTO().getIdFiliere()).orElseThrow();
         AnneeScolaire anneeScolaire = anneeScolaireService.obtenirAnneeScolaireActuelle();
-
+        StatutInscriptionEnum statut=inscriptionDTO.getStatut();
         Inscription inscription = new Inscription();
 
         inscription.setEtudiant(etudiant);
@@ -46,7 +51,7 @@ public class InscriptionService implements IInscriptionService {
         inscription.setStatut(statut);
         inscription = inscriptionRepository.save(inscription);
 
-        return convertInscriptionToInscriptionDTO(inscription);
+        return InscriptionMapper.convertInscriptionToInscriptionDTO(inscription);
     }
     @Override
     public InscriptionDTO validerInscription(long idInscription) {
@@ -54,7 +59,7 @@ public class InscriptionService implements IInscriptionService {
                 .orElseThrow(() -> new IllegalArgumentException("Inscription non trouvée"));
         inscription.setStatut(StatutInscriptionEnum.VALIDE);
         Inscription inscriptionSaved = inscriptionRepository.save(inscription);
-        return convertInscriptionToInscriptionDTO(inscriptionSaved);
+        return InscriptionMapper.convertInscriptionToInscriptionDTO(inscriptionSaved);
     }
 
     @Override
@@ -63,15 +68,15 @@ public class InscriptionService implements IInscriptionService {
                 .orElseThrow(() -> new IllegalArgumentException("Inscription non trouvée"));
         inscription.setStatut(StatutInscriptionEnum.NON_VALIDE);
         Inscription inscriptionSaved = inscriptionRepository.save(inscription);
-        return convertInscriptionToInscriptionDTO(inscriptionSaved);
+        return InscriptionMapper.convertInscriptionToInscriptionDTO(inscriptionSaved);
     }
 
     @Override
-    public List<InscriptionDTO> listInscriptions(){
+    public List<InscriptionAvecParentsInfosDTO> listInscriptions(){
         List<Inscription> inscriptions=inscriptionRepository.findAll();
-        List<InscriptionDTO> inscriptionDTOS=new ArrayList<>();
+        List<InscriptionAvecParentsInfosDTO> inscriptionDTOS=new ArrayList<>();
         for(Inscription inscription:inscriptions){
-            InscriptionDTO inscriptionDTO=convertInscriptionToInscriptionDTO(inscription);
+            InscriptionAvecParentsInfosDTO inscriptionDTO=InscriptionMapper.convertInscriptionToInscriptionAvecParentsDTO(inscription);
             inscriptionDTOS.add(inscriptionDTO);
         }
         return inscriptionDTOS;
@@ -81,7 +86,7 @@ public class InscriptionService implements IInscriptionService {
         List <Inscription> inscriptions=inscriptionRepository.findByEtudiantIdEtudiant(idEtudiant);
         List<InscriptionDTO> inscriptionDTOS=new ArrayList<>();
         for(Inscription inscription:inscriptions){
-            InscriptionDTO inscriptionDTO=convertInscriptionToInscriptionDTO(inscription);
+            InscriptionDTO inscriptionDTO=InscriptionMapper.convertInscriptionToInscriptionDTO(inscription);
             inscriptionDTOS.add(inscriptionDTO);
         }
         return inscriptionDTOS;
@@ -90,38 +95,16 @@ public class InscriptionService implements IInscriptionService {
     public List<InscriptionDTO> ListerInscriptionsValideByEtudiant(long idEtudiant){
         List<Inscription> validInscriptions = inscriptionRepository.findByEtudiantIdEtudiantAndStatut(idEtudiant, StatutInscriptionEnum.VALIDE);
         return validInscriptions.stream()
-                .map(InscriptionService::convertInscriptionToInscriptionDTO)
+                .map(InscriptionMapper::convertInscriptionToInscriptionDTO)
                 .collect(Collectors.toList());
     }
     @Override
     public List<InscriptionDTO> ListerInscriptionsNonValideByEtudiant(long idEtudiant){
         List<Inscription> nonValidInscriptions = inscriptionRepository.findByEtudiantIdEtudiantAndStatut(idEtudiant, StatutInscriptionEnum.NON_VALIDE);
         return nonValidInscriptions.stream()
-                .map(InscriptionService::convertInscriptionToInscriptionDTO)
+                .map(InscriptionMapper::convertInscriptionToInscriptionDTO)
                 .collect(Collectors.toList());
     }
 
-    public static InscriptionDTO convertInscriptionToInscriptionDTO(Inscription inscription) {
-        return InscriptionDTO.builder()
-                .idInscription(inscription.getIdInscription())
-                .date(inscription.getDate())
-                .statut(inscription.getStatut())
-                .etudiantId(inscription.getEtudiant().getIdEtudiant())
-                .filiereId(inscription.getFiliere().getIdFiliere())
-                .anneeScolaireId(inscription.getAnneeScolaire().getIdAnneScolaire())
-                .etudiantDTO(EtudiantService.convertEtudiantToEtudiantDTO(inscription.getEtudiant()))
-                .filiereDTO(FiliereService.convertFiliereToFiliereDTO(inscription.getFiliere()))
-                .anneeScolaireDTO(AnneeScolaireService.convertAnneeScolaireToAnneeScolaireDTO(inscription.getAnneeScolaire()))
-                .build();
-    }
 
-    public static  Inscription convertInscriptionDTOToInscription(InscriptionDTO inscriptionDTO, Etudiant etudiant, Filiere filiere, AnneeScolaire anneeScolaire) {
-        Inscription inscription = new Inscription();
-        inscription.setDate(new Date());
-        inscription.setStatut(inscriptionDTO.getStatut());
-        inscription.setEtudiant(etudiant);
-        inscription.setFiliere(filiere);
-        inscription.setAnneeScolaire(anneeScolaire);
-        return inscription;
-    }
 }

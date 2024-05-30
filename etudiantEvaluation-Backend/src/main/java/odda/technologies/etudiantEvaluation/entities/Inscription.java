@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import odda.technologies.etudiantEvaluation.Enumerations.StatutInscriptionEnum;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 
@@ -21,6 +23,10 @@ public class Inscription {
     private long idInscription;
 
     private Date date;
+
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateDeMiseAJour;
 
     @Enumerated(EnumType.STRING)
     private StatutInscriptionEnum statut;

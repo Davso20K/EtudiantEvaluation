@@ -1,5 +1,6 @@
 package odda.technologies.etudiantEvaluation.controllers;
 
+import odda.technologies.etudiantEvaluation.dto.InscriptionAvecParentsInfosDTO;
 import odda.technologies.etudiantEvaluation.dto.InscriptionDTO;
 import odda.technologies.etudiantEvaluation.services.IInscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ public class InscriptionController {
 
 
     @GetMapping("")
-    public List<InscriptionDTO> listerInscriptions() {
+    public List<InscriptionAvecParentsInfosDTO> listerInscriptions() {
         return inscriptionService.listInscriptions();
     }
 
@@ -50,9 +51,8 @@ public class InscriptionController {
     }
 
     @PostMapping("")
-    public InscriptionDTO inscrireEtudiant(@RequestBody InscriptionDTO inscriptionDTO) {
-        return inscriptionService.inscrireEtudiant(inscriptionDTO.getEtudiantDTO().getIdEtudiant(),
-                inscriptionDTO.getFiliereDTO().getIdFiliere(), inscriptionDTO.getStatut());
+    public InscriptionDTO inscrireEtudiant(@RequestBody InscriptionAvecParentsInfosDTO inscriptionDTO) {
+        return inscriptionService.inscrireEtudiant(inscriptionDTO);
     }
     @PostMapping("valider/{idInscription}")
     public InscriptionDTO validerUneInscription(@PathVariable long idInscription) {

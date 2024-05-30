@@ -1,5 +1,6 @@
 package odda.technologies.etudiantEvaluation.controllers;
 
+import odda.technologies.etudiantEvaluation.dto.EtudiantAvecListeInscriptionsDTO;
 import odda.technologies.etudiantEvaluation.dto.EtudiantDTO;
 import odda.technologies.etudiantEvaluation.serviceImplementations.EtudiantService;
 import odda.technologies.etudiantEvaluation.services.IEtudiantService;
@@ -22,7 +23,7 @@ public class EtudiantController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenirEtudiant(@PathVariable Long id) {
-        EtudiantDTO etudiant = etudiantService.obtenirEtudiant(id);
+        EtudiantAvecListeInscriptionsDTO etudiant = etudiantService.obtenirEtudiant(id);
         if (etudiant == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Étudiant non trouvé avec l'ID : " + id);
         }
@@ -30,15 +31,18 @@ public class EtudiantController {
     }
 
     @GetMapping("")
-    public List<EtudiantDTO> listerEtudiants() {
+    public List<EtudiantAvecListeInscriptionsDTO> listerEtudiants() {
         return etudiantService.listerEtudiants();
     }
+
+
 
     @PutMapping("/{id}")
     public EtudiantDTO mettreAJourEtudiant(@PathVariable Long id, @RequestBody EtudiantDTO etudiantDTO) {
         return etudiantService.mettreAJourEtudiant(id, etudiantDTO);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void supprimerEtudiant(@PathVariable Long id) {
         etudiantService.supprimerEtudiant(id);

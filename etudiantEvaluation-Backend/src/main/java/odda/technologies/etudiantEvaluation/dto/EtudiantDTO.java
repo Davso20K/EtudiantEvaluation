@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import odda.technologies.etudiantEvaluation.Enumerations.SexeEnum;
 import odda.technologies.etudiantEvaluation.entities.Inscription;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class EtudiantDTO {
 
     private long idEtudiant;
@@ -26,5 +27,5 @@ public class EtudiantDTO {
     private Date dateNaissance;
     private String contact;
     private String email;
-    private List<InscriptionDTO> listInscriptions;
+
 }

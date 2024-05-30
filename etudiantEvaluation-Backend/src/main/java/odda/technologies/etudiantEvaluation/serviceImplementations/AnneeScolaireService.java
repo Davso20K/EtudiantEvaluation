@@ -1,8 +1,10 @@
 package odda.technologies.etudiantEvaluation.serviceImplementations;
 
+import odda.technologies.etudiantEvaluation.dto.AnneeScolaireAvecListeInscriptionsDTO;
 import odda.technologies.etudiantEvaluation.dto.AnneeScolaireDTO;
 import odda.technologies.etudiantEvaluation.dto.InscriptionDTO;
 import odda.technologies.etudiantEvaluation.entities.AnneeScolaire;
+import odda.technologies.etudiantEvaluation.mappers.AnneeScolaireMapper;
 import odda.technologies.etudiantEvaluation.repositories.AnneScolaireRepository;
 import odda.technologies.etudiantEvaluation.services.IAnneeScolaireService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,16 +48,16 @@ public class AnneeScolaireService implements IAnneeScolaireService {
 
 
     @Override
-    public AnneeScolaireDTO obtenirAnneeScolaire(Long id) {
+    public AnneeScolaireAvecListeInscriptionsDTO obtenirAnneeScolaire(Long id) {
         AnneeScolaire anneeScolaire = anneeScolaireRepository.findById(id).orElse(null);
-        return anneeScolaire != null ? convertAnneeScolaireToAnneeScolaireDTO(anneeScolaire) : null;
+        return anneeScolaire != null ? AnneeScolaireMapper.convertAnScolaireToAnneeScolaireAvecListInscDTO(anneeScolaire) : null;
     }
 
     @Override
-    public List<AnneeScolaireDTO> listerAnneesScolaires() {
+    public List<AnneeScolaireAvecListeInscriptionsDTO> listerAnneesScolaires() {
         List<AnneeScolaire> anneesScolaires = anneeScolaireRepository.findAll();
         return anneesScolaires.stream()
-                .map(AnneeScolaireService::convertAnneeScolaireToAnneeScolaireDTO)
+                .map(AnneeScolaireMapper::convertAnScolaireToAnneeScolaireAvecListInscDTO)
                 .collect(Collectors.toList());
     }
 
@@ -66,32 +68,5 @@ public class AnneeScolaireService implements IAnneeScolaireService {
         anneeScolaireRepository.deleteById(id);
     }
 
-    public static AnneeScolaireDTO convertAnneeScolaireToAnneeScolaireDTO(AnneeScolaire anneeScolaire) {
-        List<InscriptionDTO> listInscriptions = anneeScolaire.getListInscriptions() != null
-                ? anneeScolaire.getListInscriptions().stream()
-                .map(inscription -> InscriptionDTO.builder()
-                        .idInscription(inscription.getIdInscription())
-                        .date(inscription.getDate())
-                        .statut(inscription.getStatut())
-                        .etudiantId(inscription.getEtudiant().getIdEtudiant())
-                        .anneeScolaireId(inscription.getAnneeScolaire().getIdAnneScolaire())
-                        .filiereId(inscription.getFiliere().getIdFiliere())
-                        .build())
-                .toList()
-                : new ArrayList<>();
-        return AnneeScolaireDTO.builder()
-                .idAnneScolaire(anneeScolaire.getIdAnneScolaire())
-                .libelle(anneeScolaire.getLibelle())
-                .etat(anneeScolaire.isEtat())
-                .listInscriptions(listInscriptions)
-                .build();
-    }
 
-    public static AnneeScolaire convertAnneeScolaireDTOToAnneeScolaire(AnneeScolaireDTO anneeScolaireDTO) {
-        return AnneeScolaire.builder()
-                .idAnneScolaire(anneeScolaireDTO.getIdAnneScolaire())
-                .libelle(anneeScolaireDTO.getLibelle())
-                .etat(anneeScolaireDTO.isEtat())
-                .build();
-    }
 }

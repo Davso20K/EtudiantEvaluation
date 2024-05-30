@@ -1,8 +1,10 @@
 package odda.technologies.etudiantEvaluation.serviceImplementations;
 
+import odda.technologies.etudiantEvaluation.dto.FiliereAvecListeInscriptionsDTO;
 import odda.technologies.etudiantEvaluation.dto.FiliereDTO;
 import odda.technologies.etudiantEvaluation.dto.InscriptionDTO;
 import odda.technologies.etudiantEvaluation.entities.Filiere;
+import odda.technologies.etudiantEvaluation.mappers.FiliereMapper;
 import odda.technologies.etudiantEvaluation.repositories.FiliereRepository;
 import odda.technologies.etudiantEvaluation.services.IFiliereService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,22 +20,22 @@ public class FiliereService implements IFiliereService {
     private FiliereRepository filiereRepository;
     @Override
     public FiliereDTO creerFiliere(FiliereDTO filiereDTO) {
-        Filiere filiere = convertFiliereDTOToFiliere(filiereDTO);
+        Filiere filiere = FiliereMapper.convertFiliereDTOToFiliere(filiereDTO);
         filiere = filiereRepository.save(filiere);
-        return convertFiliereToFiliereDTO(filiere);
+        return FiliereMapper.convertFiliereToFiliereDTO(filiere);
     }
 
     @Override
-    public FiliereDTO obtenirFiliere(Long id) {
+    public FiliereAvecListeInscriptionsDTO obtenirFiliere(Long id) {
         Filiere filiere = filiereRepository.findById(id).orElse(null);
-        return filiere != null ? convertFiliereToFiliereDTO(filiere) : null;
+        return filiere != null ? FiliereMapper.convertFiliereToFiliereAvecListeInscDTO(filiere) : null;
     }
 
     @Override
-    public List<FiliereDTO> listerFilieres() {
+    public List<FiliereAvecListeInscriptionsDTO> listerFilieres() {
         List<Filiere> filieres = filiereRepository.findAll();
         return filieres.stream()
-                .map(FiliereService::convertFiliereToFiliereDTO)
+                .map(FiliereMapper::convertFiliereToFiliereAvecListeInscDTO)
                 .collect(Collectors.toList());
     }
 
@@ -41,10 +43,10 @@ public class FiliereService implements IFiliereService {
     public FiliereDTO mettreAJourFiliere(Long id, FiliereDTO filiereDTO) {
         Filiere filiereExistant = filiereRepository.findById(id).orElse(null);
         if (filiereExistant != null) {
-            Filiere filiere = convertFiliereDTOToFiliere(filiereDTO);
+            Filiere filiere = FiliereMapper.convertFiliereDTOToFiliere(filiereDTO);
             filiere.setIdFiliere(id);
             filiere = filiereRepository.save(filiere);
-            return convertFiliereToFiliereDTO(filiere);
+            return FiliereMapper.convertFiliereToFiliereDTO(filiere);
         }
         return null;
     }
@@ -54,33 +56,5 @@ public class FiliereService implements IFiliereService {
         filiereRepository.deleteById(id);
     }
 
-    public static FiliereDTO convertFiliereToFiliereDTO(Filiere filiere) {
-        List<InscriptionDTO> listInscriptions = filiere.getListInscriptions() != null
-                ? filiere.getListInscriptions().stream()
-                .map(inscription -> InscriptionDTO.builder()
-                        .idInscription(inscription.getIdInscription())
-                        .date(inscription.getDate())
-                        .statut(inscription.getStatut())
-                        .etudiantId(inscription.getEtudiant().getIdEtudiant())
-                        .anneeScolaireId(inscription.getAnneeScolaire().getIdAnneScolaire())
-                        .filiereId(inscription.getFiliere().getIdFiliere())
-                        .build())
-                .toList()
-                : new ArrayList<>();
-        return FiliereDTO.builder()
-                .idFiliere(filiere.getIdFiliere())
-                .code(filiere.getCode())
-                .libelle(filiere.getLibelle())
-                .listInscriptions(listInscriptions)
-                .build();
-    }
 
-    public static Filiere convertFiliereDTOToFiliere(FiliereDTO filiereDTO) {
-
-        return Filiere.builder()
-                .idFiliere(filiereDTO.getIdFiliere())
-                .code(filiereDTO.getCode())
-                .libelle(filiereDTO.getLibelle())
-                .build();
-    }
 }

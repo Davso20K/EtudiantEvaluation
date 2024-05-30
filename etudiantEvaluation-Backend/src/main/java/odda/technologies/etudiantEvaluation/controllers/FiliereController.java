@@ -1,5 +1,6 @@
 package odda.technologies.etudiantEvaluation.controllers;
 
+import odda.technologies.etudiantEvaluation.dto.FiliereAvecListeInscriptionsDTO;
 import odda.technologies.etudiantEvaluation.dto.FiliereDTO;
 import odda.technologies.etudiantEvaluation.services.IFiliereService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +22,14 @@ public class FiliereController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenirFiliere(@PathVariable Long id) {
-        FiliereDTO filiere = filiereService.obtenirFiliere(id);
+        FiliereAvecListeInscriptionsDTO filiere = filiereService.obtenirFiliere(id);
         if (filiere == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Filière non trouvée avec l'ID : " + id);
         }
         return ResponseEntity.ok(filiere);
     }
     @GetMapping("")
-    public List<FiliereDTO> listerFilieres() {
+    public List<FiliereAvecListeInscriptionsDTO> listerFilieres() {
         return filiereService.listerFilieres();
     }
 

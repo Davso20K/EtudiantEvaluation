@@ -1,5 +1,6 @@
 package odda.technologies.etudiantEvaluation.controllers;
 
+import odda.technologies.etudiantEvaluation.dto.AnneeScolaireAvecListeInscriptionsDTO;
 import odda.technologies.etudiantEvaluation.dto.AnneeScolaireDTO;
 import odda.technologies.etudiantEvaluation.serviceImplementations.AnneeScolaireService;
 import odda.technologies.etudiantEvaluation.services.IAnneeScolaireService;
@@ -16,12 +17,12 @@ public class AnneeScolaireController {
     @Autowired
     private IAnneeScolaireService anneeScolaireService;
     @GetMapping("")
-    public List<AnneeScolaireDTO> listerAnneesScolaires() {
+    public List<AnneeScolaireAvecListeInscriptionsDTO> listerAnneesScolaires() {
         return anneeScolaireService.listerAnneesScolaires();
     }
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenirAnneeScolaire(@PathVariable Long id) {
-        AnneeScolaireDTO anneeScolaire = anneeScolaireService.obtenirAnneeScolaire(id);
+        AnneeScolaireAvecListeInscriptionsDTO anneeScolaire = anneeScolaireService.obtenirAnneeScolaire(id);
         if (anneeScolaire == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Année scolaire non trouvée avec l'ID : " + id);
         }

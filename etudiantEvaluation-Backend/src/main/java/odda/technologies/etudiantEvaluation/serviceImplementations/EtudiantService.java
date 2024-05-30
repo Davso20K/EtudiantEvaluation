@@ -1,9 +1,11 @@
 package odda.technologies.etudiantEvaluation.serviceImplementations;
 
+import odda.technologies.etudiantEvaluation.dto.EtudiantAvecListeInscriptionsDTO;
 import odda.technologies.etudiantEvaluation.dto.EtudiantDTO;
 import odda.technologies.etudiantEvaluation.dto.InscriptionDTO;
 import odda.technologies.etudiantEvaluation.entities.Etudiant;
 import odda.technologies.etudiantEvaluation.entities.Inscription;
+import odda.technologies.etudiantEvaluation.mappers.EtudiantMapper;
 import odda.technologies.etudiantEvaluation.repositories.EtudiantRepository;
 import odda.technologies.etudiantEvaluation.services.IEtudiantService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,24 +21,24 @@ public class EtudiantService implements IEtudiantService {
     private EtudiantRepository etudiantRepository;
     @Override
     public EtudiantDTO creerEtudiant(EtudiantDTO etudiantDTO) {
-        Etudiant etudiant = convertEtudiantDTOToEtudiant(etudiantDTO);
+        Etudiant etudiant = EtudiantMapper.convertEtudiantDTOToEtudiant(etudiantDTO);
         etudiant = etudiantRepository.save(etudiant);
-        return convertEtudiantToEtudiantDTO(etudiant);
+        return EtudiantMapper.convertEtudiantToEtudiantDTO(etudiant);
     }
 
     @Override
-    public EtudiantDTO obtenirEtudiant(Long id) {
+    public EtudiantAvecListeInscriptionsDTO obtenirEtudiant(Long id) {
         Etudiant etudiant = etudiantRepository.findById(id).orElse(null);
-        return etudiant != null ? convertEtudiantToEtudiantDTO(etudiant) : null;
+        return etudiant != null ? EtudiantMapper.convertEtudiantToEtudiantAvecListeInscDTO(etudiant) : null;
     }
 
     @Override
-    public List<EtudiantDTO> listerEtudiants() {
+    public List<EtudiantAvecListeInscriptionsDTO> listerEtudiants() {
         List<Etudiant> etudiants = etudiantRepository.findAll();
-        List<EtudiantDTO> etudiantsDTO = new ArrayList<>();
+        List<EtudiantAvecListeInscriptionsDTO> etudiantsDTO = new ArrayList<>();
 
         for (Etudiant etudiant : etudiants) {
-            EtudiantDTO etudiantDTO = EtudiantService.convertEtudiantToEtudiantDTO(etudiant);
+            EtudiantAvecListeInscriptionsDTO etudiantDTO = EtudiantMapper.convertEtudiantToEtudiantAvecListeInscDTO(etudiant);
             etudiantsDTO.add(etudiantDTO);
         }
 
@@ -47,10 +49,10 @@ public class EtudiantService implements IEtudiantService {
     public EtudiantDTO mettreAJourEtudiant(Long id, EtudiantDTO etudiantDTO) {
         Etudiant etudiantExistant = etudiantRepository.findById(id).orElse(null);
         if (etudiantExistant != null) {
-            Etudiant etudiant =convertEtudiantDTOToEtudiant(etudiantDTO);
+            Etudiant etudiant =EtudiantMapper.convertEtudiantDTOToEtudiant(etudiantDTO);
             etudiant.setIdEtudiant(id);
             etudiant = etudiantRepository.save(etudiant);
-            return convertEtudiantToEtudiantDTO(etudiant);
+            return EtudiantMapper.convertEtudiantToEtudiantDTO(etudiant);
         }
         return null;
     }
@@ -61,45 +63,4 @@ public class EtudiantService implements IEtudiantService {
     }
 
 
-    public static EtudiantDTO convertEtudiantToEtudiantDTO(Etudiant etudiant) {
-        List<InscriptionDTO> listInscriptions = etudiant.getListInscriptions() != null
-                ? etudiant.getListInscriptions().stream()
-                .map(inscription -> InscriptionDTO.builder()
-                        .idInscription(inscription.getIdInscription())
-                        .date(inscription.getDate())
-                        .statut(inscription.getStatut())
-                        .etudiantId(inscription.getEtudiant().getIdEtudiant())
-                        .anneeScolaireId(inscription.getAnneeScolaire().getIdAnneScolaire())
-                        .filiereId(inscription.getFiliere().getIdFiliere())
-                        .build())
-                .toList()
-                : new ArrayList<>();
-
-        return EtudiantDTO.builder()
-                .idEtudiant(etudiant.getIdEtudiant())
-                .nom(etudiant.getNom())
-                .prenom(etudiant.getPrenom())
-                .sexe(etudiant.getSexe())
-                .dateNaissance(etudiant.getDateNaissance())
-                .contact(etudiant.getContact())
-                .email(etudiant.getEmail())
-                .listInscriptions(listInscriptions)
-                .build();
-    }
-
-
-
-
-
-    public static Etudiant convertEtudiantDTOToEtudiant(EtudiantDTO etudiantDTO) {
-        return Etudiant.builder()
-                .idEtudiant(etudiantDTO.getIdEtudiant())
-                .nom(etudiantDTO.getNom())
-                .prenom(etudiantDTO.getPrenom())
-                .sexe(etudiantDTO.getSexe())
-                .dateNaissance(etudiantDTO.getDateNaissance())
-                .contact(etudiantDTO.getContact())
-                .email(etudiantDTO.getEmail())
-                .build();
-    }
 }
